@@ -1,12 +1,10 @@
+use crate::errors::MoveError;
+
 #[derive(Default)]
 pub struct Cell {
     // TODO: make this smaller than u8 ??
     owner: Option<u8>,
     atoms: u8,
-}
-
-pub enum MoveError {
-    OtherPlayersCell,
 }
 
 impl Cell {
@@ -30,7 +28,7 @@ impl Cell {
     }
 
     /// Add unchecked handles explosions.
-    /// Explosion can let multiple 
+    /// Explosion can let multiple
     pub fn add_unchecked(
         &mut self,
         new: u8,
