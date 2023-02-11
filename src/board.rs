@@ -1,7 +1,8 @@
 use crate::cell::Cell;
 use crate::errors::MoveError;
-
-enum BoardState {
+use std::fmt::Display;
+/// Board can be in any one of the states
+pub enum BoardState {
     Wait,
     Explosion(Vec<(usize, usize)>),
     CheckWinCondition,
@@ -101,3 +102,26 @@ impl Board {
     }
 }
 
+impl Display for Board {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let exploision: Vec<(usize, usize)> = if let BoardState::Explosion(ref explosion) = self.state {
+            explosion.to_vec()
+        } else {
+            vec![]
+        };
+        for (r, rows) in self.cells.iter().enumerate() {
+            for (c, cell) in rows.iter().enumerate() {
+                    if exploision.contains(&(r, c)) {
+                        write!(f, "|+1|")?;
+                        continue;
+                    } else if let Some(owner_id) = cell.owner {
+                    write!(f, "|{}{}|", owner_id, cell.atoms)?;
+                } else {
+                write!(f, "|  |")?;
+                }
+            }
+            writeln!(f)?;
+        }
+        Ok(())
+    }
+}
