@@ -1,8 +1,8 @@
 //! Provides cell of chain reaction board.
 use crate::errors::MoveError;
 
-#[derive(Default, Clone)]
 /// Cell structure of Board.
+#[derive(Default, Clone, PartialEq)]
 pub struct Cell {
     pub(crate) owner: Option<u8>,
     pub(crate) atoms: u8,

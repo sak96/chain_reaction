@@ -4,6 +4,7 @@ use crate::cell::Cell;
 use crate::errors::MoveError;
 use std::fmt::Display;
 /// Board can be in any one of the states
+#[derive(PartialEq)]
 pub enum BoardState {
     /// When board is waiting for player input
     Wait,
@@ -17,6 +18,7 @@ pub enum BoardState {
 
 type BoxBoxCell = Box<[Box<[Cell]>]>;
 /// Board structure of game.
+#[derive(PartialEq)]
 pub struct Board{
     cells: BoxBoxCell,
     rows: usize,
