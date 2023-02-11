@@ -5,3 +5,11 @@ edition = "2021"
 default-run = "cli"
 
 [dependencies]
+yew = { version = "0.20", features = ["csr"], optional = true }
+
+[features]
+webui = ["dep:yew"]
+
+[[bin]]
+name = "web"
+required-features = ["webui"]
