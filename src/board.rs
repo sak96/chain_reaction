@@ -35,7 +35,7 @@ pub struct Board{
     rows: usize,
     cols: usize,
     cur_player: u8,
-    players: u8,
+    players: Box<[bool]>,
     state: BoardState,
 }
 
@@ -133,7 +133,7 @@ impl Board {
             rows,
             cols,
             cells,
-            players,
+            players: vec![true; players.into()].into_boxed_slice(),
         }
     }
 
@@ -190,11 +190,23 @@ impl Board {
             if !explosion.is_empty() {
                 self.state = BoardState::Explosion(explosion)
             } else {
-                self.cur_player = (self.cur_player + 1) % self.players;
-                self.state = BoardState::Wait
+                self.next_player()
             }
             Ok(())
         }
+    }
+
+    fn next_player(&mut self) {
+        let mut i = self.cur_player as usize;
+        let player_count = self.players.len();
+        loop  {
+            i = (i + 1) % player_count;
+            if self.players[i] {
+                self.cur_player = i as u8;
+                break
+            }
+        }
+        self.state = BoardState::Wait
     }
 
     /// Runs next iterations of explosion.
@@ -224,18 +236,19 @@ impl Board {
                 }
             }
             BoardState::CheckWinCondition => {
+                self.players.iter_mut().for_each(|i| *i = false);
                 for rows in self.cells.iter() {
                     for cell in rows.iter() {
                         if let Some(owner) = cell.owner {
-                            if owner != self.cur_player {
-                                self.cur_player = (self.cur_player + 1) % self.players;
-                                self.state = BoardState::Wait;
-                                return false;
-                            }
+                            self.players[owner as usize] = true
                         }
                     }
                 }
-                self.state = BoardState::GameOver(self.cur_player);
+                if self.players.iter().filter(|x| **x).count() == 1 {
+                    self.state = BoardState::GameOver(self.cur_player);
+                } else {
+                    self.next_player();
+                }
                 false
             }
             _ => {
