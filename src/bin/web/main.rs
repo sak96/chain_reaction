@@ -1,4 +1,4 @@
-use chain_reaction::board::{Board, CellState};
+use chain_reaction::board::{Board, BoardState, CellState};
 use yew::prelude::*;
 
 #[derive(Properties, PartialEq)]
@@ -13,6 +13,10 @@ pub struct CellProps {
     pub col: usize,
     pub player_count: u8,
     pub onclick: Callback<(usize, usize), ()>,
+}
+
+fn get_hsl_player_color(id: u8, total: u8) -> (usize, usize, usize) {
+    ((id as usize) * 360 / (total as usize), 50, 50)
 }
 
 #[function_component(Cell)]
@@ -30,11 +34,7 @@ fn cell(
     let (content, (h, s, l)) = match state {
         CellState::Explosion => (0, (0, 100, 0)),
         CellState::NonEmpty(owner_id, atoms) => {
-            let color = (
-                (((*owner_id as usize) * 360) / *player_count as usize),
-                50,
-                50,
-            );
+            let color = get_hsl_player_color(*owner_id, *player_count);
             (*atoms, color)
         }
         CellState::Empty => (0, (0, 100, 100)),
@@ -66,9 +66,15 @@ fn app(AppProps { players }: &AppProps) -> Html {
             }
         })
     };
+    let cur_player = board.borrow_mut().current_player_id();
+    let game_over = matches!(board.borrow_mut().state(), BoardState::GameOver(_));
+    let (h, s, l) = get_hsl_player_color(cur_player, players);
     html! {
         <div style="display: flex;align-items: center;flex-direction: column;">
             <h1>{ "Chain Reaction" }</h1>
+            <h2 style={format!("color:hsl({},{}%,{}%);",h,s,l)}>
+            {if game_over {"Winner: "} else {"Current Player: "} }{cur_player}
+            </h2>
             <table style="border-collapse: collapse;font-size: 2.5em;">{
                 cells.iter().enumerate().map(
                     |(r, row)| html!{<tr>{
