@@ -273,3 +273,38 @@ impl Display for Board {
         Ok(())
     }
 }
+
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn player_cannot_play_if_all_cells_are_lost() {
+        let moves = [
+            (0, 0, 0),
+            (1, 0, 1),
+            (2, 0, 2),
+            (0, 0, 0),
+        ];
+        let mut b = Board::new(4, 4, 3);
+        for (player, r, c) in moves {
+            assert!(b.player_move(player, r, c).is_ok());
+        }
+
+        // player 1 lost all cells.
+        let player_lost_all_cells = 1;
+        for rows in b.cells() {
+            for cell in rows {
+                if let CellState::NonEmpty(owner, _) = cell {
+                    assert_ne!(owner, player_lost_all_cells);
+                }
+            }
+        }
+
+        // the player cannot play.
+        assert_ne!(b.current_player_id(), player_lost_all_cells);
+
+    }
+}
+
