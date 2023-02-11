@@ -37,7 +37,7 @@ impl Board {
     }
 
     pub fn player_move(&mut self, player: u8, row: usize, col: usize) -> Result<(), MoveError> {
-        if !self.next_iteration_exists() || self.cur_player != player {
+        if !matches!(self.state, BoardState::Wait) || self.cur_player != player {
             Err(MoveError::NotCurrentPlayerMove)
         } else if row >= self.rows || col >= self.cols {
             Err(MoveError::MoveOutsideBoard)
@@ -59,9 +59,6 @@ impl Board {
         }
     }
 
-    pub fn next_iteration_exists(&self) -> bool {
-        !matches!(self.state, BoardState::Wait)
-    }
 
     pub fn next_iteration(&self) {}
 }
