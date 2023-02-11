@@ -2,9 +2,8 @@ use crate::errors::MoveError;
 
 #[derive(Default, Clone)]
 pub struct Cell {
-    // TODO: make this smaller than u8 ??
-    owner: Option<u8>,
-    atoms: u8,
+    pub(crate) owner: Option<u8>,
+    pub(crate) atoms: u8,
 }
 
 impl Cell {

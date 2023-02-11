@@ -5,6 +5,7 @@ enum BoardState {
     Wait,
     Explosion(Vec<(usize, usize)>),
     CheckWinCondition,
+    GameOver(u8),
 }
 
 type BoxBoxCell = Box<[Box<[Cell]>]>;
@@ -60,6 +61,43 @@ impl Board {
         }
     }
 
-
-    pub fn next_iteration(&self) {}
+    pub fn next_iteration(&mut self) {
+        match self.state {
+            BoardState::Explosion(ref mut explosion) => {
+                let mut exploded_cells = vec![];
+                for (row, col) in explosion.drain(..) {
+                    exploded_cells.append(
+                        &mut self
+                            .cells
+                            .get_mut(row)
+                            .unwrap()
+                            .get_mut(col)
+                            .unwrap()
+                            .add_unchecked(1, self.cur_player, row, col, self.rows, self.cols),
+                    )
+                }
+                if !exploded_cells.is_empty() {
+                    self.state = BoardState::Explosion(exploded_cells);
+                } else {
+                    self.state = BoardState::CheckWinCondition
+                }
+            }
+            BoardState::CheckWinCondition => {
+                for rows in self.cells.iter() {
+                    for cell in rows.iter() {
+                        if let Some(owner) = cell.owner {
+                            if owner != self.cur_player {
+                                self.cur_player = (self.cur_player + 1) % self.players;
+                                self.state = BoardState::Wait;
+                                return;
+                            }
+                        }
+                    }
+                }
+                self.state = BoardState::GameOver(self.cur_player);
+            }
+            _ => {}
+        }
+    }
 }
+
