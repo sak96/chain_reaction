@@ -1,16 +1,19 @@
+//! Provides cell of chain reaction board.
 use crate::errors::MoveError;
 
 #[derive(Default, Clone)]
+/// Cell structure of Board.
 pub struct Cell {
     pub(crate) owner: Option<u8>,
     pub(crate) atoms: u8,
 }
 
 impl Cell {
+
     /// Add checked is used when player add atom to a cell.
     ///
     /// It only allows addition in blank or cell owned by player.
-    pub fn add_checked(
+    pub(crate) fn add_checked(
         &mut self,
         player: u8,
         row: usize,
@@ -28,7 +31,7 @@ impl Cell {
 
     /// Add unchecked handles explosions.
     /// Explosion can let multiple
-    pub fn add_unchecked(
+    pub(crate) fn add_unchecked(
         &mut self,
         new: u8,
         player: u8,
