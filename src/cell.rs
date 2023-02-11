@@ -1,6 +1,6 @@
 use crate::errors::MoveError;
 
-#[derive(Default)]
+#[derive(Default, Clone)]
 pub struct Cell {
     // TODO: make this smaller than u8 ??
     owner: Option<u8>,

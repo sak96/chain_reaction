@@ -1,6 +1,5 @@
 use crate::cell::Cell;
 use crate::errors::MoveError;
-use std::iter::repeat_with;
 
 enum BoardState {
     Wait,
@@ -8,9 +7,10 @@ enum BoardState {
     CheckWinCondition,
 }
 
-struct Board {
-    // TODO: use const generics,
-    cells: Vec<Vec<Cell>>,
+type BoxBoxCell = Box<[Box<[Cell]>]>;
+/// Board structure of game.
+pub struct Board{
+    cells: BoxBoxCell,
     rows: usize,
     cols: usize,
     cur_player: u8,
@@ -23,9 +23,10 @@ impl Board {
         if rows < 3 || cols < 3 {
             panic!("rows and columns should be greater than 3");
         }
-        let cells = repeat_with(|| repeat_with(|| Default::default()).take(cols).collect())
-            .take(rows)
-            .collect();
+        if players < 2 {
+            panic!("there should be minimum of 2 players ");
+        }
+        let cells = vec![vec![Default::default(); cols].into_boxed_slice(); rows].into_boxed_slice();
         Self {
             state: BoardState::Wait,
             cur_player: 0,
