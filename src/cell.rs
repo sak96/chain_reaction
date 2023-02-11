@@ -3,7 +3,7 @@ use crate::errors::MoveError;
 
 /// Cell structure of Board.
 #[derive(Default, Clone, PartialEq)]
-pub struct Cell {
+pub(crate) struct Cell {
     pub(crate) owner: Option<u8>,
     pub(crate) atoms: u8,
 }

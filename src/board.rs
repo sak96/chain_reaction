@@ -16,6 +16,17 @@ pub enum BoardState {
     GameOver(u8),
 }
 
+/// Cell State
+#[derive(Debug, Clone, PartialEq)]
+pub enum CellState {
+    /// Cell gained a new atom.
+    Explosion,
+    /// Cell is non empty. Stores owner id and atoms in it.
+    NonEmpty(u8, u8),
+    /// Cell is Empty.
+    Empty,
+}
+
 type BoxBoxCell = Box<[Box<[Cell]>]>;
 /// Board structure of game.
 #[derive(PartialEq)]
@@ -29,9 +40,37 @@ pub struct Board{
 }
 
 impl Board {
-    /// Provides access to cells
-    pub fn cells(&self) -> &BoxBoxCell {
-        &self.cells
+    /// Provides 2d vector of [`CellState`].
+    /// [`CellState`]: self::CellState
+    ///
+    /// # Examples
+    /// When game starts the board is empty.
+    ///
+    /// ```
+    /// use chain_reaction::board::Board;
+    /// use chain_reaction::board::CellState;
+    ///
+    /// let board = Board::new(4, 4, 2);
+    /// assert_eq!(board.cells(), vec![vec![CellState::Empty;4];4]);
+    /// ```
+    pub fn cells(&self) -> Vec<Vec<CellState>> {
+        let exploision: Vec<(usize, usize)> = if let BoardState::Explosion(ref explosion) = self.state {
+            explosion.to_vec()
+        } else {
+            vec![]
+        };
+        self.cells.iter().enumerate().map(
+            |(r,row)| row.iter().enumerate().map(
+                |(c, cell)|
+                if exploision.contains(&(r, c)) {
+                    CellState::Explosion
+                } else if let Some(owner_id) = cell.owner {
+                    CellState::NonEmpty(owner_id, cell.atoms)
+                } else {
+                    CellState::Empty
+                }
+            ).collect()
+        ).collect()
     }
 
     /// Provides current player id
