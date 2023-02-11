@@ -230,6 +230,7 @@ impl Board {
                             if owner != self.cur_player {
                                 self.cur_player = (self.cur_player + 1) % self.players;
                                 self.state = BoardState::Wait;
+                                return false;
                             }
                         }
                     }
