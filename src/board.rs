@@ -246,20 +246,12 @@ impl Board {
 
 impl Display for Board {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let exploision: Vec<(usize, usize)> = if let BoardState::Explosion(ref explosion) = self.state {
-            explosion.to_vec()
-        } else {
-            vec![]
-        };
-        for (r, rows) in self.cells.iter().enumerate() {
-            for (c, cell) in rows.iter().enumerate() {
-                    if exploision.contains(&(r, c)) {
-                        write!(f, "|+1|")?;
-                        continue;
-                    } else if let Some(owner_id) = cell.owner {
-                    write!(f, "|{}{}|", owner_id, cell.atoms)?;
-                } else {
-                write!(f, "|  |")?;
+        for rows in self.cells() {
+            for cell in rows {
+                match cell {
+                    CellState::Explosion => write!(f, "|+1|")?,
+                    CellState::NonEmpty(owner_id,atoms) =>  write!(f, "|{}{}|", owner_id, atoms)?,
+                    CellState::Empty => write!(f, "|  |")?,
                 }
             }
             writeln!(f)?;
