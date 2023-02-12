@@ -1,6 +1,7 @@
 # Chain Reaction
 
 Chain reaction game is a strategy board game for two players.
+Check out [Demo](https://sak96.github.io/chain_reaction/).
 
 ## How to play ?
 
