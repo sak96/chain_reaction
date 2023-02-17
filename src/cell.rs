@@ -8,7 +8,6 @@ pub(crate) struct Cell {
 }
 
 impl Cell {
-
     pub(crate) fn add_atom(
         &mut self,
         new: u8,
@@ -64,5 +63,31 @@ impl Cell {
             explosion.push((row, col + 1))
         }
         explosion
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_neighbour_for_corner_cell() {
+        assert_eq!(Cell::get_neighbors(0, 0, 10, 10), vec![(1, 0), (0, 1)])
+    }
+
+    #[test]
+    fn test_neighbour_for_edge_cell() {
+        assert_eq!(
+            Cell::get_neighbors(0, 1, 10, 10),
+            vec![(1, 1), (0, 0), (0, 2)]
+        )
+    }
+
+    #[test]
+    fn test_neighbour_for_normal_cell() {
+        assert_eq!(
+            Cell::get_neighbors(1, 1, 10, 10),
+            vec![(0, 1), (2, 1), (1, 0), (1, 2)]
+        )
     }
 }
