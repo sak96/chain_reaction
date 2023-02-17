@@ -21,7 +21,7 @@ type HSLColor = (usize, usize, usize);
 fn get_hsl_player_color(id: u8, total: u8) -> HSLColor {
     ((id as usize) * 360 / (total as usize), 50, 50)
 }
-const EXPLOSION_HSL: HSLColor = (0, 0, 50);
+const EXPLOSION_HSL: HSLColor = (0, 100, 0);
 const EMPTY_HSL: HSLColor = (0, 100, 100);
 
 #[function_component(Cell)]
@@ -37,7 +37,7 @@ fn cell(
     let row = *row;
     let col = *col;
     let (content, (h, s, l)) = match state {
-        CellState::Explosion => ('X'.to_string(), EXPLOSION_HSL),
+        CellState::Explosion => ('*'.to_string(), EXPLOSION_HSL),
         CellState::NonEmpty(owner_id, atoms) => {
             let color = get_hsl_player_color(*owner_id, *player_count);
             (atoms.to_string(), color)
@@ -45,7 +45,7 @@ fn cell(
         CellState::Empty => ('0'.to_string(), EMPTY_HSL),
     };
     html! {
-        <td style={format!("border: 1px solid black;background-color:hsl({}, {}%, {}%);",h,s,l)}
+        <td style={format!("border: 1px solid black;color:hsl({}, {}%, {}%);",h,s,l)}
             onclick={let onclick = onclick.clone(); move |_| { onclick.emit((row,col)) } }>
             {content}
         </td>
