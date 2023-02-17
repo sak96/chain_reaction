@@ -303,6 +303,7 @@ mod tests {
         let mut b = Board::new(4, 4, 3);
         for (player, r, c) in moves {
             assert!(b.player_move(player, r, c).is_ok());
+            while b.next_iteration() {};
         }
 
         // player 1 lost all cells.
