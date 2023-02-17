@@ -40,20 +40,29 @@ impl Cell {
             if self.atoms == 0 {
                 self.owner = None
             }
-            let mut explosion = vec![];
-            if row != 0 {
-                explosion.push((row - 1, col))
-            }
-            if row + 1 != row_max {
-                explosion.push((row + 1, col))
-            }
-            if col != 0 {
-                explosion.push((row, col - 1))
-            }
-            if col + 1 != col_max {
-                explosion.push((row, col + 1))
-            }
-            explosion
+            Self::get_neighbors(row, col, row_max, col_max)
         }
+    }
+
+    pub(crate) fn get_neighbors(
+        row: usize,
+        col: usize,
+        row_max: usize,
+        col_max: usize,
+    ) -> Vec<(usize, usize)> {
+        let mut explosion = vec![];
+        if row != 0 {
+            explosion.push((row - 1, col))
+        }
+        if row + 1 != row_max {
+            explosion.push((row + 1, col))
+        }
+        if col != 0 {
+            explosion.push((row, col - 1))
+        }
+        if col + 1 != col_max {
+            explosion.push((row, col + 1))
+        }
+        explosion
     }
 }
