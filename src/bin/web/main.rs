@@ -37,12 +37,12 @@ fn cell(
     let row = *row;
     let col = *col;
     let (content, (h, s, l)) = match state {
-        CellState::Explosion(atoms) => (*atoms, EXPLOSION_HSL),
+        CellState::Explosion => ('X'.to_string(), EXPLOSION_HSL),
         CellState::NonEmpty(owner_id, atoms) => {
             let color = get_hsl_player_color(*owner_id, *player_count);
-            (*atoms, color)
+            (atoms.to_string(), color)
         }
-        CellState::Empty => (0, EMPTY_HSL),
+        CellState::Empty => ('0'.to_string(), EMPTY_HSL),
     };
     html! {
         <td style={format!("border: 1px solid black;background-color:hsl({}, {}%, {}%);",h,s,l)}

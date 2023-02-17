@@ -17,7 +17,7 @@ impl Cell {
         col: usize,
         row_max: usize,
         col_max: usize,
-    ) -> Vec<(usize, usize)> {
+    ) -> bool {
         let mut critical_mass = 4;
         self.owner = Some(player);
 
@@ -33,14 +33,14 @@ impl Cell {
         self.atoms += new;
 
         if self.atoms < critical_mass {
-            vec![]
+            false
         } else {
             // explode
             self.atoms -= critical_mass;
             if self.atoms == 0 {
                 self.owner = None
             }
-            Self::get_neighbors(row, col, row_max, col_max)
+            true
         }
     }
 

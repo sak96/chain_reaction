@@ -20,7 +20,7 @@ pub enum BoardState {
 #[derive(Debug, Clone, PartialEq)]
 pub enum CellState {
     /// Cell gained a new atom.
-    Explosion(u8),
+    Explosion,
     /// Cell is non empty. Stores owner id and atoms in it.
     NonEmpty(u8, u8),
     /// Cell is Empty.
@@ -68,7 +68,7 @@ impl Board {
                     .enumerate()
                     .map(|(c, cell)| {
                         if exploision.contains(&(r, c)) {
-                            CellState::Explosion(cell.atoms)
+                            CellState::Explosion
                         } else if let Some(owner_id) = cell.owner {
                             CellState::NonEmpty(owner_id, cell.atoms)
                         } else {
@@ -199,9 +199,8 @@ impl Board {
                     return Err(MoveError::OtherPlayersCell);
                 }
             }
-            let explosion = cell.add_atom(1, self.cur_player, row, col, self.rows, self.cols);
-            if !explosion.is_empty() {
-                self.state = BoardState::Explosion(explosion)
+            if cell.add_atom(1, self.cur_player, row, col, self.rows, self.cols) {
+                self.state = BoardState::Explosion(vec![(row, col)])
             } else {
                 self.next_player()
             }
@@ -228,18 +227,27 @@ impl Board {
     pub fn next_iteration(&mut self) -> bool {
         match self.state {
             BoardState::Explosion(ref mut explosion) => {
-                let mut exploded_cells = vec![];
-                for (row, col) in explosion.drain(..) {
-                    exploded_cells.append(
-                        &mut self
-                            .cells
-                            .get_mut(row)
-                            .unwrap()
-                            .get_mut(col)
-                            .unwrap()
-                            .add_atom(1, self.cur_player, row, col, self.rows, self.cols),
-                    )
-                }
+                // TODO: improve traversal ??
+                let exploded_cells: Vec<_> = explosion
+                    .drain(..)
+                    .flat_map(|(row, col)| {
+                        Cell::get_neighbors(row, col, self.rows, self.cols)
+                    })
+                    .filter_map(|(row, col)| {
+                        if self.cells[row][col].add_atom(
+                            1,
+                            self.cur_player,
+                            row,
+                            col,
+                            self.rows,
+                            self.cols,
+                        ) {
+                            Some((row, col))
+                        } else {
+                            None
+                        }
+                    })
+                    .collect();
                 if !exploded_cells.is_empty() {
                     self.state = BoardState::Explosion(exploded_cells);
                     true
@@ -274,7 +282,7 @@ impl Display for Board {
         for rows in self.cells() {
             for cell in rows {
                 match cell {
-                    CellState::Explosion(atoms) => write!(f, "|+{}|", atoms)?,
+                    CellState::Explosion => write!(f, "|XX|")?,
                     CellState::NonEmpty(owner_id, atoms) => write!(f, "|{}{}|", owner_id, atoms)?,
                     CellState::Empty => write!(f, "|  |")?,
                 }
