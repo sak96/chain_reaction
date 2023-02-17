@@ -20,7 +20,7 @@ pub enum BoardState {
 #[derive(Debug, Clone, PartialEq)]
 pub enum CellState {
     /// Cell gained a new atom.
-    Explosion,
+    Explosion(u8),
     /// Cell is non empty. Stores owner id and atoms in it.
     NonEmpty(u8, u8),
     /// Cell is Empty.
@@ -63,7 +63,7 @@ impl Board {
             |(r,row)| row.iter().enumerate().map(
                 |(c, cell)|
                 if exploision.contains(&(r, c)) {
-                    CellState::Explosion
+                    CellState::Explosion(cell.atoms)
                 } else if let Some(owner_id) = cell.owner {
                     CellState::NonEmpty(owner_id, cell.atoms)
                 } else {
@@ -263,7 +263,7 @@ impl Display for Board {
         for rows in self.cells() {
             for cell in rows {
                 match cell {
-                    CellState::Explosion => write!(f, "|+1|")?,
+                    CellState::Explosion(atoms) => write!(f, "|+{}|", atoms)?,
                     CellState::NonEmpty(owner_id,atoms) =>  write!(f, "|{}{}|", owner_id, atoms)?,
                     CellState::Empty => write!(f, "|  |")?,
                 }

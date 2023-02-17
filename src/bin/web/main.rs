@@ -37,7 +37,7 @@ fn cell(
     let row = *row;
     let col = *col;
     let (content, (h, s, l)) = match state {
-        CellState::Explosion => (0, EXPLOSION_HSL),
+        CellState::Explosion(atoms) => (*atoms, EXPLOSION_HSL),
         CellState::NonEmpty(owner_id, atoms) => {
             let color = get_hsl_player_color(*owner_id, *player_count);
             (*atoms, color)
