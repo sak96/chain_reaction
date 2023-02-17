@@ -1,4 +1,5 @@
 use chain_reaction::board::{Board, BoardState, CellState};
+use gloo_timers::callback::Timeout;
 use yew::prelude::*;
 
 #[derive(Properties, PartialEq)]
@@ -61,10 +62,22 @@ fn app(AppProps { players }: &AppProps) -> Html {
         Callback::from(move |(r, c): (usize, usize)| {
             let b: &mut Board = &mut *b.borrow_mut();
             if b.player_move(b.current_player_id(), r, c).is_ok() {
-                while b.next_iteration() {}
                 cells.set(b.cells());
             }
         })
+    };
+    {
+        let b = board.clone();
+        let cells = cells.clone();
+        use_effect(move || {
+            let timeout = Timeout::new(1_000, move || {
+                let b: &mut Board = &mut *b.borrow_mut();
+                if b.next_iteration() {
+                    cells.set(b.cells());
+                }
+            });
+            timeout.forget();
+        });
     };
     let cur_player = board.borrow_mut().current_player_id();
     let game_over = matches!(board.borrow_mut().state(), BoardState::GameOver(_));
