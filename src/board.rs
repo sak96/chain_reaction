@@ -188,13 +188,18 @@ impl Board {
         } else if row >= self.rows || col >= self.cols {
             Err(MoveError::MoveOutsideBoard)
         } else {
-            let explosion = self
+            let cell = self
                 .cells
                 .get_mut(row)
                 .ok_or(MoveError::MoveOutsideBoard)?
                 .get_mut(col)
-                .ok_or(MoveError::MoveOutsideBoard)?
-                .add_checked(self.cur_player, row, col, self.rows, self.cols)?;
+                .ok_or(MoveError::MoveOutsideBoard)?;
+            if let Some(cell_player) = cell.owner {
+                if cell_player != player {
+                    return Err(MoveError::OtherPlayersCell);
+                }
+            }
+            let explosion = cell.add_atom(1, self.cur_player, row, col, self.rows, self.cols);
             if !explosion.is_empty() {
                 self.state = BoardState::Explosion(explosion)
             } else {
