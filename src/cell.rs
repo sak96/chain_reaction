@@ -1,5 +1,4 @@
 //! Provides cell of chain reaction board.
-use crate::errors::MoveError;
 
 /// Cell structure of Board.
 #[derive(Default, Clone, PartialEq)]
@@ -10,28 +9,7 @@ pub(crate) struct Cell {
 
 impl Cell {
 
-    /// Add checked is used when player add atom to a cell.
-    ///
-    /// It only allows addition in blank or cell owned by player.
-    pub(crate) fn add_checked(
-        &mut self,
-        player: u8,
-        row: usize,
-        col: usize,
-        row_max: usize,
-        col_max: usize,
-    ) -> Result<Vec<(usize, usize)>, MoveError> {
-        if let Some(cell_player) = self.owner {
-            if cell_player != player {
-                return Err(MoveError::OtherPlayersCell);
-            }
-        }
-        Ok(self.add_unchecked(1, player, row, col, row_max, col_max))
-    }
-
-    /// Add unchecked handles explosions.
-    /// Explosion can let multiple
-    pub(crate) fn add_unchecked(
+    pub(crate) fn add_atom(
         &mut self,
         new: u8,
         player: u8,

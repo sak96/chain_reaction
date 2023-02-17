@@ -30,7 +30,7 @@ pub enum CellState {
 type BoxBoxCell = Box<[Box<[Cell]>]>;
 /// Board structure of game.
 #[derive(PartialEq)]
-pub struct Board{
+pub struct Board {
     cells: BoxBoxCell,
     rows: usize,
     cols: usize,
@@ -54,23 +54,30 @@ impl Board {
     /// assert_eq!(board.cells(), vec![vec![CellState::Empty;4];4]);
     /// ```
     pub fn cells(&self) -> Vec<Vec<CellState>> {
-        let exploision: Vec<(usize, usize)> = if let BoardState::Explosion(ref explosion) = self.state {
-            explosion.to_vec()
-        } else {
-            vec![]
-        };
-        self.cells.iter().enumerate().map(
-            |(r,row)| row.iter().enumerate().map(
-                |(c, cell)|
-                if exploision.contains(&(r, c)) {
-                    CellState::Explosion(cell.atoms)
-                } else if let Some(owner_id) = cell.owner {
-                    CellState::NonEmpty(owner_id, cell.atoms)
-                } else {
-                    CellState::Empty
-                }
-            ).collect()
-        ).collect()
+        let exploision: Vec<(usize, usize)> =
+            if let BoardState::Explosion(ref explosion) = self.state {
+                explosion.to_vec()
+            } else {
+                vec![]
+            };
+        self.cells
+            .iter()
+            .enumerate()
+            .map(|(r, row)| {
+                row.iter()
+                    .enumerate()
+                    .map(|(c, cell)| {
+                        if exploision.contains(&(r, c)) {
+                            CellState::Explosion(cell.atoms)
+                        } else if let Some(owner_id) = cell.owner {
+                            CellState::NonEmpty(owner_id, cell.atoms)
+                        } else {
+                            CellState::Empty
+                        }
+                    })
+                    .collect()
+            })
+            .collect()
     }
 
     /// Provides current player id
@@ -126,7 +133,8 @@ impl Board {
         if players < 2 {
             panic!("there should be minimum of 2 players ");
         }
-        let cells = vec![vec![Default::default(); cols].into_boxed_slice(); rows].into_boxed_slice();
+        let cells =
+            vec![vec![Default::default(); cols].into_boxed_slice(); rows].into_boxed_slice();
         Self {
             state: BoardState::Wait,
             cur_player: 0,
@@ -199,11 +207,11 @@ impl Board {
     fn next_player(&mut self) {
         let mut i = self.cur_player as usize;
         let player_count = self.players.len();
-        loop  {
+        loop {
             i = (i + 1) % player_count;
             if self.players[i] {
                 self.cur_player = i as u8;
-                break
+                break;
             }
         }
         self.state = BoardState::Wait
@@ -224,7 +232,7 @@ impl Board {
                             .unwrap()
                             .get_mut(col)
                             .unwrap()
-                            .add_unchecked(1, self.cur_player, row, col, self.rows, self.cols),
+                            .add_atom(1, self.cur_player, row, col, self.rows, self.cols),
                     )
                 }
                 if !exploded_cells.is_empty() {
@@ -251,9 +259,7 @@ impl Board {
                 }
                 false
             }
-            _ => {
-                false
-            }
+            _ => false,
         }
     }
 }
@@ -264,7 +270,7 @@ impl Display for Board {
             for cell in rows {
                 match cell {
                     CellState::Explosion(atoms) => write!(f, "|+{}|", atoms)?,
-                    CellState::NonEmpty(owner_id,atoms) =>  write!(f, "|{}{}|", owner_id, atoms)?,
+                    CellState::NonEmpty(owner_id, atoms) => write!(f, "|{}{}|", owner_id, atoms)?,
                     CellState::Empty => write!(f, "|  |")?,
                 }
             }
@@ -274,19 +280,13 @@ impl Display for Board {
     }
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
     fn player_cannot_play_if_all_cells_are_lost() {
-        let moves = [
-            (0, 0, 0),
-            (1, 0, 1),
-            (2, 0, 2),
-            (0, 0, 0),
-        ];
+        let moves = [(0, 0, 0), (1, 0, 1), (2, 0, 2), (0, 0, 0)];
         let mut b = Board::new(4, 4, 3);
         for (player, r, c) in moves {
             assert!(b.player_move(player, r, c).is_ok());
@@ -304,7 +304,5 @@ mod tests {
 
         // the player cannot play.
         assert_ne!(b.current_player_id(), player_lost_all_cells);
-
     }
 }
-
