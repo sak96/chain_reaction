@@ -1,6 +1,5 @@
 mod app;
 pub mod cells;
-pub mod color;
 
 use app::{App, AppProps};
 

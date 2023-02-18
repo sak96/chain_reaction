@@ -3,7 +3,6 @@ use gloo_timers::callback::Timeout;
 use yew::prelude::*;
 
 use crate::cells::Cell;
-use crate::color::get_hsl_player_color;
 
 #[derive(Properties, PartialEq)]
 pub struct AppProps {
@@ -51,11 +50,26 @@ pub fn app(AppProps { players }: &AppProps) -> Html {
         });
     };
     let game_over = matches!(board.borrow_mut().state(), BoardState::GameOver(_));
-    let (h, s, l) = get_hsl_player_color(*cur_player, players);
+    let player_colors = (0..players)
+        .into_iter()
+        .map(|p| {
+            format!(
+                ".player-{} {{color: hsl({},{}%,{}%);}}\n",
+                p,
+                (p as usize) * 360 / (players as usize),
+                50,
+                50
+            )
+        })
+        .collect::<String>();
     html! {
+        <>
+        <style>{player_colors}{r#"
+        .explosion {color: black}
+        "#}</style>
         <div style="display: flex;align-items: center;flex-direction: column;">
             <h1>{ "Chain Reaction" }</h1>
-            <h2 style={format!("color:hsl({},{}%,{}%);",h,s,l)}>
+            <h2 class={classes!(format!("player-{}", *cur_player))}>
             {if game_over {"Winner: "} else {"Current Player: "} }{*cur_player}
             </h2>
             <table style="border-collapse: collapse;font-size: 2.5em;">{
@@ -69,7 +83,6 @@ pub fn app(AppProps { players }: &AppProps) -> Html {
                                     row={r}
                                     col={c}
                                     onclick={onclick.clone()}
-                                    player_count={players}
                                 />
                             }
                         ).collect::<Html>()
@@ -77,5 +90,6 @@ pub fn app(AppProps { players }: &AppProps) -> Html {
                 ).collect::<Html>()
             }</table>
         </div>
+        </>
     }
 }
