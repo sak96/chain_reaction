@@ -21,6 +21,7 @@ pub fn app(AppProps { players }: &AppProps) -> Html {
         let b = board.clone();
         use_state_eq(|| b.borrow_mut().current_player_id())
     };
+    let game_over = use_state_eq(|| false);
     let onclick = {
         let b = board.clone();
         let cells = cells.clone();
@@ -37,6 +38,7 @@ pub fn app(AppProps { players }: &AppProps) -> Html {
         let b = board.clone();
         let cells = cells.clone();
         let cur_player = cur_player.clone();
+        let game_over = game_over.clone();
         use_effect(move || {
             let timeout = Timeout::new(1_000, move || {
                 let b: &mut Board = &mut *b.borrow_mut();
@@ -44,12 +46,14 @@ pub fn app(AppProps { players }: &AppProps) -> Html {
                     cells.set(b.cells());
                 } else {
                     cur_player.set(b.current_player_id());
+                    if matches!(b.state(), BoardState::GameOver(_)) {
+                        game_over.set(true);
+                    }
                 }
             });
             timeout.forget();
         });
     };
-    let game_over = matches!(board.borrow_mut().state(), BoardState::GameOver(_));
     let player_colors = (0..players)
         .into_iter()
         .map(|p| {
@@ -70,7 +74,7 @@ pub fn app(AppProps { players }: &AppProps) -> Html {
         <div style="display: flex;align-items: center;flex-direction: column;">
             <h1>{ "Chain Reaction" }</h1>
             <h2 class={classes!(format!("player-{}", *cur_player))}>
-            {if game_over {"Winner: "} else {"Current Player: "} }{*cur_player}
+            {if *game_over {"Winner: "} else {"Current Player: "} }{*cur_player}
             </h2>
             <table style="border-collapse: collapse;font-size: 2.5em;">{
                 cells.iter().enumerate().map(
