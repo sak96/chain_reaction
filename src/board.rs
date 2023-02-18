@@ -211,13 +211,12 @@ impl Board {
     fn next_player(&mut self) {
         let mut i = self.cur_player as usize;
         let player_count = self.players.len();
-        loop {
+        self.cur_player = loop {
             i = (i + 1) % player_count;
             if self.players[i] {
-                self.cur_player = i as u8;
-                break;
+                break i as u8;
             }
-        }
+        };
         self.state = BoardState::Wait
     }
 
@@ -230,31 +229,24 @@ impl Board {
                 // TODO: improve traversal ??
                 let exploded_cells: Vec<_> = explosion
                     .drain(..)
-                    .flat_map(|(row, col)| {
-                        Cell::get_neighbors(row, col, self.rows, self.cols)
-                    })
-                    .filter_map(|(row, col)| {
-                        if self.cells[row][col].add_atom(
+                    .flat_map(|(row, col)| Cell::get_neighbors(row, col, self.rows, self.cols))
+                    .filter(|(row, col)| {
+                        self.cells[*row][*col].add_atom(
                             1,
                             self.cur_player,
-                            row,
-                            col,
+                            *row,
+                            *col,
                             self.rows,
                             self.cols,
-                        ) {
-                            Some((row, col))
-                        } else {
-                            None
-                        }
+                        )
                     })
                     .collect();
-                if !exploded_cells.is_empty() {
-                    self.state = BoardState::Explosion(exploded_cells);
-                    true
+                self.state = if !exploded_cells.is_empty() {
+                    BoardState::Explosion(exploded_cells)
                 } else {
-                    self.state = BoardState::CheckWinCondition;
-                    true
-                }
+                    BoardState::CheckWinCondition
+                };
+                true
             }
             BoardState::CheckWinCondition => {
                 self.players.iter_mut().for_each(|i| *i = false);
@@ -303,7 +295,7 @@ mod tests {
         let mut b = Board::new(4, 4, 3);
         for (player, r, c) in moves {
             assert!(b.player_move(player, r, c).is_ok());
-            while b.next_iteration() {};
+            while b.next_iteration() {}
         }
 
         // player 1 lost all cells.
