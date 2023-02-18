@@ -58,11 +58,11 @@ pub fn app(AppProps { players }: &AppProps) -> Html {
         .into_iter()
         .map(|p| {
             format!(
-                ".player-{} {{color: hsl({},{}%,{}%);}}\n",
-                p,
-                (p as usize) * 360 / (players as usize),
-                50,
-                50
+                ".player-{p} {{color: hsl({h},{s}%,{l}%);}}\n.player-{p} circle {{fill: hsl({h},{s}%,{l}%);}}",
+                p = p,
+                h = (p as usize) * 360 / (players as usize),
+                s = 50,
+                l = 50
             )
         })
         .collect::<String>();
@@ -70,6 +70,26 @@ pub fn app(AppProps { players }: &AppProps) -> Html {
         <>
         <style>{player_colors}{r#"
         .explosion {color: black}
+        @keyframes explode {
+          from {
+            transform: scale(0.5);
+          }
+          to {
+            transform: scale(1);
+          }
+        }
+        .explosion svg {
+           animation:  explode 0.5s ;
+        }
+        @keyframes dance {
+          100% {
+              transform-origin: center;
+              transform: rotate(45deg);
+          }
+        }
+        circle {
+           animation:  dance 2s infinite alternate;
+        }
         "#}</style>
         <div style="display: flex;align-items: center;flex-direction: column;">
             <h1>{ "Chain Reaction" }</h1>
