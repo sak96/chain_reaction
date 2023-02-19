@@ -15,7 +15,7 @@ pub enum MoveError {
 }
 
 /// Board can be in any one of the states
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum BoardState {
     /// When board is waiting for player input
     Wait,
