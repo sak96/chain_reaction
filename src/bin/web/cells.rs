@@ -40,7 +40,7 @@ pub fn cell(
     };
     let parsed_html = Html::from_html_unchecked(AttrValue::from(content));
     html! {
-        <td style={"border: 1px solid black;"} class={classes!(class)}
+        <td class={classes!(class)}
             onclick={let onclick = onclick.clone(); move |_| { onclick.emit((row,col)) } }>
             {parsed_html}
         </td>

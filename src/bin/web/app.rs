@@ -69,6 +69,9 @@ pub fn app(AppProps { players }: &AppProps) -> Html {
     html! {
         <>
         <style>{player_colors}{r#"
+        .app {display: flex;align-items: center;flex-direction: column;} 
+        .app table {border-collapse: collapse; font-size: 2.5em;}
+        .app td {border: 1px solid black;}
         .explosion {color: black}
         @keyframes explode {
           from {
@@ -91,12 +94,12 @@ pub fn app(AppProps { players }: &AppProps) -> Html {
            animation:  dance 2s infinite alternate;
         }
         "#}</style>
-        <div style="display: flex;align-items: center;flex-direction: column;">
+        <div class={classes!("app")}>
             <h1>{ "Chain Reaction" }</h1>
             <h2 class={classes!(format!("player-{}", *cur_player))}>
             {if *game_over {"Winner: "} else {"Current Player: "} }{*cur_player}
             </h2>
-            <table style="border-collapse: collapse;font-size: 2.5em;">{
+            <table>{
                 cells.iter().enumerate().map(
                     |(r, row)| html!{<tr>{
                         row.iter().enumerate().map(
