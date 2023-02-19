@@ -1,8 +1,19 @@
 //! Provides board for playing chain reaction.
 
 use crate::cell::Cell;
-use crate::errors::MoveError;
 use std::fmt::Display;
+
+/// Move Errors.
+#[derive(Debug, PartialEq, Eq)]
+pub enum MoveError {
+    /// Move made on other player's cell.
+    OtherPlayersCell,
+    /// Move made when it is not player's turn.
+    NotCurrentPlayerMove,
+    /// Move made outside board.
+    MoveOutsideBoard,
+}
+
 /// Board can be in any one of the states
 #[derive(PartialEq)]
 pub enum BoardState {
@@ -157,13 +168,12 @@ impl Board {
     ///
     /// Will return [`MoveError`] if move is invalid.
     ///
-    /// [`MoveError`]: crate::error::MoveError
+    /// [`MoveError`]: crate::board::MoveError
     ///
     /// # Examples
     ///
     /// ```
-    /// use chain_reaction::board::Board;
-    /// use chain_reaction::errors::MoveError;
+    /// use chain_reaction::board::{Board, MoveError};
     ///
     /// let mut board = Board::new(4, 4, 2);
     ///

@@ -3,4 +3,3 @@
 
 pub mod board;
 mod cell;
-pub mod errors;
