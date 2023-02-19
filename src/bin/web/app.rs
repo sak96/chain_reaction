@@ -71,7 +71,7 @@ pub fn app(AppProps { players }: &AppProps) -> Html {
         <style>{player_colors}{r#"
         .app {display: flex;align-items: center;flex-direction: column;}
         .app table {border-collapse: collapse; font-size: 2.5em;}
-        .app td {border: 1px solid black;}
+        .app td {border: 1px solid white; background-color: black;}
         .explosion {color: black}
         @keyframes explode {
           from {
