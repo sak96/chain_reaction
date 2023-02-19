@@ -71,7 +71,7 @@ pub fn app(AppProps { players }: &AppProps) -> Html {
         <style>{player_colors}{r#"
         .app {display: flex;align-items: center;flex-direction: column;}
         .app table {border-collapse: collapse; font-size: 2.5em;}
-        .app td {border: 1px solid white; background-color: black;}
+        .app td {border: 1px solid white; background-image: linear-gradient(gray, black, gray);}
         .explosion {color: black}
         @keyframes explode {
           from {
@@ -86,6 +86,10 @@ pub fn app(AppProps { players }: &AppProps) -> Html {
            animation:  explode 1.5s ;
         }
         @keyframes dance {
+          0% {
+              transform-origin: center;
+              transform: rotate(-45deg);
+          }
           100% {
               transform-origin: center;
               transform: rotate(45deg);
