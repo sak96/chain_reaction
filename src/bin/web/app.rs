@@ -40,7 +40,7 @@ pub fn app(AppProps { players }: &AppProps) -> Html {
         let cur_player = cur_player.clone();
         let game_over = game_over.clone();
         use_effect(move || {
-            let timeout = Timeout::new(1_000, move || {
+            let timeout = Timeout::new(2_000, move || {
                 let b: &mut Board = &mut b.borrow_mut();
                 if b.next_iteration() {
                     cells.set(b.cells());
@@ -78,11 +78,12 @@ pub fn app(AppProps { players }: &AppProps) -> Html {
             transform: scale(0.5);
           }
           to {
-            transform: scale(1);
+            opacity: 0.5;
+            transform: scale(1.5) rotate(10deg);
           }
         }
         .explosion svg {
-           animation:  explode 0.5s ;
+           animation:  explode 1.5s ;
         }
         @keyframes dance {
           100% {
