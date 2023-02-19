@@ -27,7 +27,7 @@ pub fn app(AppProps { players }: &AppProps) -> Html {
         let cells = cells.clone();
         let cur_player = cur_player.clone();
         Callback::from(move |(r, c): (usize, usize)| {
-            let b: &mut Board = &mut *b.borrow_mut();
+            let b: &mut Board = &mut b.borrow_mut();
             if b.player_move(b.current_player_id(), r, c).is_ok() {
                 cells.set(b.cells());
                 cur_player.set(b.current_player_id());
@@ -35,13 +35,13 @@ pub fn app(AppProps { players }: &AppProps) -> Html {
         })
     };
     {
-        let b = board.clone();
+        let b = board;
         let cells = cells.clone();
         let cur_player = cur_player.clone();
         let game_over = game_over.clone();
         use_effect(move || {
             let timeout = Timeout::new(1_000, move || {
-                let b: &mut Board = &mut *b.borrow_mut();
+                let b: &mut Board = &mut b.borrow_mut();
                 if b.next_iteration() {
                     cells.set(b.cells());
                 } else {
@@ -69,7 +69,7 @@ pub fn app(AppProps { players }: &AppProps) -> Html {
     html! {
         <>
         <style>{player_colors}{r#"
-        .app {display: flex;align-items: center;flex-direction: column;} 
+        .app {display: flex;align-items: center;flex-direction: column;}
         .app table {border-collapse: collapse; font-size: 2.5em;}
         .app td {border: 1px solid black;}
         .explosion {color: black}
