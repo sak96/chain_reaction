@@ -1,8 +1,9 @@
 mod app;
+pub mod board;
 pub mod cells;
 
-use app::{App, AppProps};
+use app::App;
 
 fn main() {
-    yew::Renderer::<App>::with_props(AppProps { players: 2 }).render();
+    yew::Renderer::<App>::new().render();
 }

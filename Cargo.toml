@@ -8,9 +8,10 @@ default-run = "cli"
 yew = { version = "0.20", features = ["csr"], optional = true }
 gloo-timers = { version = "0.2.6", optional = true }
 wasm-bindgen-futures = { version = "0.4.34", optional = true }
+yew-router = { version = "0.17", optional = true }
 
 [features]
-webui = ["dep:yew", "dep:gloo-timers", "dep:wasm-bindgen-futures"]
+webui = ["dep:yew", "dep:gloo-timers", "dep:wasm-bindgen-futures", "dep:yew-router"]
 
 [[bin]]
 name = "web"
