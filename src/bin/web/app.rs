@@ -21,6 +21,21 @@ pub fn app(AppProps { players }: &AppProps) -> Html {
         let b = board.clone();
         use_state_eq(|| b.borrow_mut().current_player_id())
     };
+    // reset board if player number has changed.
+    {
+        let b = board.clone();
+        let cells = cells.clone();
+        let cur_player = cur_player.clone();
+        use_effect_with_deps(
+            move |_| {
+                let board = Board::new(10, 10, players);
+                cells.set(board.cells());
+                cur_player.set(board.current_player_id());
+                *b.borrow_mut() = board;
+            },
+            players,
+        );
+    };
     let game_over = use_state_eq(|| false);
     let onclick = {
         let b = board.clone();
