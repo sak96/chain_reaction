@@ -9,6 +9,7 @@ use crate::cells::Cell;
 pub enum GameBoardAction {
     MoveAnimation,
     Move(usize, usize),
+    Reset,
 }
 
 pub struct GameBoardState {
@@ -28,6 +29,7 @@ impl Reducible for GameBoardState {
                         // TODO: handle no change.
                     };
                 }
+                _ => (),
             }
         }
         self
@@ -41,12 +43,19 @@ pub struct GameBoardPorps {
 
 #[function_component(GameBoard)]
 pub fn game_board(GameBoardPorps { players }: &GameBoardPorps) -> Html {
-    let game_board_state = use_reducer(|| {
-        let board = Board::new(10, 10, *players);
-        GameBoardState {
-            board: RefCell::new(board),
-        }
+    let game_board_state = use_reducer(|| GameBoardState {
+        board: RefCell::new(Board::new(10, 10, *players)),
     });
+    {
+        let b = game_board_state.clone();
+        use_effect_with_deps(
+            move |p| {
+                b.board.replace(Board::new(10, 10, *p));
+                b.dispatch(GameBoardAction::Reset);
+            },
+            *players,
+        )
+    }
     let onclick = {
         let b = game_board_state.clone();
         Callback::from(move |(r, c): (usize, usize)| {
