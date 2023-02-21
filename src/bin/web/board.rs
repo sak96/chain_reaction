@@ -3,7 +3,9 @@ use gloo_timers::callback::Timeout;
 use std::cell::RefCell;
 use std::rc::Rc;
 use yew::prelude::*;
+use yew_router::prelude::*;
 
+use crate::app::Route;
 use crate::cells::Cell;
 
 pub enum GameBoardAction {
@@ -43,6 +45,8 @@ pub struct GameBoardPorps {
 
 #[function_component(GameBoard)]
 pub fn game_board(GameBoardPorps { players }: &GameBoardPorps) -> Html {
+    let navigator = use_navigator().unwrap();
+    let back_to_menu = { Callback::from(move |_| navigator.push(&Route::Menu)) };
     let game_board_state = use_reducer(|| GameBoardState {
         board: RefCell::new(Board::new(10, 10, *players)),
     });
@@ -128,7 +132,8 @@ pub fn game_board(GameBoardPorps { players }: &GameBoardPorps) -> Html {
         <div class={classes!("app")}>
             <h1>{ "Chain Reaction" }</h1>
             <h2 class={classes!(format!("player-{}", cur_player))}>
-            {if game_over {"Winner: "} else {"Current Player: "} }{cur_player}
+            {if game_over {"Winner: "} else {"Current Player: "} }{cur_player}{"  "}
+            <button onclick={back_to_menu}>{"\u{1F519}"}</button>
             </h2>
             <table>{
                 cells.iter().enumerate().map(
