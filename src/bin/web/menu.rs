@@ -59,7 +59,7 @@ pub fn number(
     }: &NumberProps,
 ) -> Html {
     let input_node_ref = use_node_ref();
-    let min = min_value.clone();
+    let min = *min_value;
     let max = if min_value > max_value {
         min_value
     } else {
@@ -67,8 +67,8 @@ pub fn number(
     };
     {
         let input_node_ref = input_node_ref.clone();
-        let inital_value = inital_value.clone();
-        let min_value = min_value.clone();
+        let inital_value = *inital_value;
+        let min_value = *min_value;
         let update = update.clone();
         use_effect_with_deps(
             move |_| {
