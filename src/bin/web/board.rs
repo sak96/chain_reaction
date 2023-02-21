@@ -90,6 +90,7 @@ pub fn game_board(GameBoardPorps { players }: &GameBoardPorps) -> Html {
     html! {
         <>
         <style>{player_colors}{r#"
+        svg {width: 2rem; height: 2rem}
         .app {display: flex;align-items: center;flex-direction: column;}
         .app table {border-collapse: collapse; font-size: 2.5em;}
         .app td {border: 1px solid white; background-image: linear-gradient(gray, black, gray);}
