@@ -2,21 +2,20 @@ use yew::prelude::*;
 use yew_router::prelude::*;
 
 use crate::board::GameBoard;
+use crate::menu::Menu;
 #[derive(Clone, Routable, PartialEq)]
-enum Route {
+pub enum Route {
     #[at("/:players")]
     App { players: u8 },
     #[not_found]
     #[at("/404")]
-    NotFound,
+    Menu,
 }
 
 fn switch_route(routes: Route) -> Html {
     match routes {
         Route::App { players } => html! {<GameBoard players={players} />},
-        Route::NotFound => html! {
-            <Redirect<Route> to={Route::App {players: 2}}/>
-        },
+        Route::Menu => html! { <Menu /> },
     }
 }
 
