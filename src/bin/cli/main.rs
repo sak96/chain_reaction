@@ -41,4 +41,3 @@ fn main() {
     };
     println!("{} player won", player);
 }
-
