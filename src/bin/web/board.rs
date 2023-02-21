@@ -67,7 +67,6 @@ pub fn game_board(GameBoardPorps { players }: &GameBoardPorps) -> Html {
         .collect::<String>();
 
     let (game_over, cur_player, cells) = {
-        let game_board_state = game_board_state.clone();
         let board = game_board_state.board.borrow_mut();
         if !matches!(board.state(), BoardState::Wait | BoardState::GameOver(_)) {
             let b = game_board_state.clone();
