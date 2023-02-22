@@ -8,7 +8,7 @@ pub enum Route {
     #[at("/:players")]
     App { players: u8 },
     #[not_found]
-    #[at("/404")]
+    #[at("/")]
     Menu,
 }
 
