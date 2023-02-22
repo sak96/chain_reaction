@@ -1,3 +1,9 @@
 <svg viewBox="0 0 100 100">
-  <circle class="cell" cx="45" cy="45" r="25" />
+  <defs>
+    <radialGradient id="sphere">
+      <stop offset="10%" stop-color="lightgray" />
+      <stop offset="95%" stop-color="red" />
+    </radialGradient>
+  </defs>
+  <circle fill="url('#sphere')"  class="cell" cx="45" cy="45" r="25" />
 </svg>

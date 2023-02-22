@@ -1,5 +1,11 @@
 <svg viewBox="1 0 100 100">
-  <circle cx="50" cy="25" r="25"/>
-  <circle cx="65" cy="50" r="25"/>
-  <circle cx="35" cy="50" r="25"/>
+  <defs>
+    <radialGradient id="sphere">
+      <stop offset="10%" stop-color="lightgray" />
+      <stop offset="95%" stop-color="red" />
+    </radialGradient>
+  </defs>
+  <circle fill="url('#sphere')" cx="50" cy="25" r="25"/>
+  <circle fill="url('#sphere')" cx="65" cy="50" r="25"/>
+  <circle fill="url('#sphere')" cx="35" cy="50" r="25"/>
 </svg>
