@@ -19,19 +19,19 @@ pub fn menu() -> Html {
         <>
             <style>{r#"
             .menu {
-                padding: 1rem; 
+                padding: 1rem;
                 display: flex;
                 align-items: center;
                 flex-direction: column;
             }
             .menu * {
-                margin: 1rem; 
-                padding: 0.5rem; 
+                margin: 1rem;
+                padding: 0.5rem;
             }
             "#}</style>
             <div class={classes!("menu")}>
                 <label for="players">{"Players: "}</label>
-                <Number max_value=10 min_value=2 inital_value={*players} update={players_changed} />
+                <Number max_value=7 min_value=2 inital_value={*players} update={players_changed} />
                 <button {onclick}>{"Start Game"}</button>
             </div>
         </>
