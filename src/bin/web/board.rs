@@ -11,7 +11,7 @@ use crate::cells::Cell;
 pub enum GameBoardAction {
     MoveAnimation,
     Move(usize, usize),
-    Reset,
+    Reset(u8),
 }
 
 pub struct GameBoardState {
@@ -31,7 +31,9 @@ impl Reducible for GameBoardState {
                         // TODO: handle no change.
                     };
                 }
-                _ => (),
+                GameBoardAction::Reset(players) => {
+                    *board = Board::new(10, 10, players);
+                }
             }
         }
         self
@@ -54,8 +56,7 @@ pub fn game_board(GameBoardPorps { players }: &GameBoardPorps) -> Html {
         let b = game_board_state.clone();
         use_effect_with_deps(
             move |p| {
-                b.board.replace(Board::new(10, 10, *p));
-                b.dispatch(GameBoardAction::Reset);
+                b.dispatch(GameBoardAction::Reset(*p));
             },
             *players,
         )
@@ -76,6 +77,14 @@ pub fn game_board(GameBoardPorps { players }: &GameBoardPorps) -> Html {
             )
         })
         .collect::<String>();
+
+    let reset = {
+        let players = *players;
+        let b = game_board_state.clone();
+        Callback::from(move |_| {
+            b.dispatch(GameBoardAction::Reset(players));
+        })
+    };
 
     let (game_over, cur_player, cells) = {
         let board = game_board_state.board.borrow_mut();
@@ -132,6 +141,7 @@ pub fn game_board(GameBoardPorps { players }: &GameBoardPorps) -> Html {
             <h2 class={classes!(format!("player-{}", cur_player))}>
             {if game_over {"Winner: "} else {"Current Player: "} }{cur_player}{"  "}
             <button onclick={back_to_menu}>{"\u{1F519}"}</button>
+            <button onclick={reset}>{"\u{1F504}"}</button>
             </h2>
             <table>{
                 cells.iter().enumerate().map(
