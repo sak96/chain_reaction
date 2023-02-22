@@ -100,7 +100,7 @@ pub fn game_board(GameBoardPorps { players }: &GameBoardPorps) -> Html {
         .app table {border-collapse: collapse; font-size: 2.5em;}
         .app td {
             border: 1px solid white;
-            background-image: linear-gradient(LightSlateGray, DarkSlateGray, LightSlateGray);
+            background-image: linear-gradient(LightSlateGray, Black, LightSlateGray);
         }
         .explosion {color: black}
         @keyframes explode {
