@@ -71,7 +71,10 @@ pub fn game_board(GameBoardPorps { players }: &GameBoardPorps) -> Html {
         .into_iter()
         .map(|p| {
             format!(
-                ".player-{p} {{color: hsl({h},50%,50%);}}\n.player-{p} circle {{ filter: hue-rotate({h}deg);}}",
+                r#".player-{p} {{color: hsl({h},50%,50%);}}
+                   .player-{p} circle {{ filter: hue-rotate({h}deg);}}
+                   .player-{p} button {{ font-size: 1.5rem;}}
+                "#,
                 p = p,
                 h = (p as usize) * 360 / (*players as usize),
             )
