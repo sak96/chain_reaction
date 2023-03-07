@@ -16,6 +16,7 @@ pub enum GameBoardAction {
 
 pub struct GameBoardState {
     board: RefCell<Board>,
+    error: RefCell<String>,
 }
 
 impl Reducible for GameBoardState {
@@ -27,8 +28,10 @@ impl Reducible for GameBoardState {
                 GameBoardAction::MoveAnimation => if !board.next_iteration() {},
                 GameBoardAction::Move(r, c) => {
                     let cur_player = board.current_player_id();
-                    if board.player_move(cur_player, r, c).is_ok() {
-                        // TODO: handle no change.
+                    if let Err(msg) = board.player_move(cur_player, r, c) {
+                        *self.error.borrow_mut() = format!("{:?}", msg);
+                    } else {
+                        self.error.borrow_mut().drain(..);
                     };
                 }
                 GameBoardAction::Reset(players) => {
@@ -51,6 +54,7 @@ pub fn game_board(GameBoardPorps { players }: &GameBoardPorps) -> Html {
     let back_to_menu = { Callback::from(move |_| navigator.push(&Route::Menu)) };
     let game_board_state = use_reducer(|| GameBoardState {
         board: RefCell::new(Board::new(10, 10, *players)),
+        error: RefCell::new(String::new()),
     });
     {
         let b = game_board_state.clone();
@@ -89,7 +93,7 @@ pub fn game_board(GameBoardPorps { players }: &GameBoardPorps) -> Html {
         })
     };
 
-    let (game_over, cur_player, cells) = {
+    let (game_over, cur_player, cells, error) = {
         let board = game_board_state.board.borrow_mut();
         if !matches!(board.state(), BoardState::Wait | BoardState::GameOver(_)) {
             let b = game_board_state.clone();
@@ -99,6 +103,7 @@ pub fn game_board(GameBoardPorps { players }: &GameBoardPorps) -> Html {
             matches!(board.state(), BoardState::GameOver(_)),
             board.current_player_id(),
             board.cells(),
+            game_board_state.error.borrow().clone(),
         )
     };
     html! {
@@ -146,6 +151,7 @@ pub fn game_board(GameBoardPorps { players }: &GameBoardPorps) -> Html {
             <button onclick={back_to_menu}>{"\u{1F519}"}</button>
             <button onclick={reset}>{"\u{1F504}"}</button>
             </h2>
+            <p style="color: darkred;">{if !error.is_empty() {&error} else {""} }<br/></p>
             <table>{
                 cells.iter().enumerate().map(
                     |(r, row)| html!{<tr>{
