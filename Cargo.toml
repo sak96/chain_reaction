@@ -10,9 +10,10 @@ gloo-timers = { version = "0.2.6", optional = true }
 wasm-bindgen-futures = { version = "0.4.34", optional = true }
 yew-router = { version = "0.17", optional = true }
 web-sys = { version = "0.3.61", optional = true }
+wee_alloc = { version = "0.4.5", optional = true }
 
 [features]
-webui = ["dep:yew", "dep:gloo-timers", "dep:wasm-bindgen-futures", "dep:yew-router", "dep:web-sys"]
+webui = ["yew", "gloo-timers", "wasm-bindgen-futures", "yew-router", "web-sys", "wee_alloc"]
 
 [[bin]]
 name = "web"
