@@ -12,6 +12,10 @@ pub enum MoveError {
     NotCurrentPlayerMove,
     /// Move made outside board.
     MoveOutsideBoard,
+    /// Previous not complete.
+    MoveNotComplete,
+    /// Game over.
+    GameOver,
 }
 
 /// Board can be in any one of the states
@@ -190,10 +194,29 @@ impl Board {
     /// assert_eq!(board.player_move(1, 0, 0), Err(MoveError::OtherPlayersCell));
     ///
     /// // Player 1 make move outside board, hence the error.
-    /// assert_eq!(board.player_move(1, 0, 0), Err(MoveError::OtherPlayersCell));
+    /// assert_eq!(board.player_move(1, 5, 0), Err(MoveError::MoveOutsideBoard));
+    ///
+    /// // Player 1 make valid move.
+    /// assert_eq!(board.player_move(1, 1, 0), Ok(()));
+    ///
+    /// // Player 0 make valid move which result in explosion.
+    /// assert_eq!(board.player_move(0, 0, 0), Ok(()));
+    ///
+    /// // Player 1 try to when move is not yet complete.
+    /// assert_eq!(board.player_move(0, 0, 0), Err(MoveError::MoveNotComplete));
+    ///
+    /// board.next_iteration();
+    /// board.next_iteration();
+    ///
+    /// // Player 1 try after game is over
+    /// assert_eq!(board.player_move(0, 0, 0), Err(MoveError::GameOver));
     /// ```
     pub fn player_move(&mut self, player: u8, row: usize, col: usize) -> Result<(), MoveError> {
-        if !matches!(self.state, BoardState::Wait) || self.cur_player != player {
+        if matches!(self.state, BoardState::GameOver(_)) {
+            Err(MoveError::GameOver)
+        } else if !matches!(self.state, BoardState::Wait) {
+            Err(MoveError::MoveNotComplete)
+        } else if self.cur_player != player {
             Err(MoveError::NotCurrentPlayerMove)
         } else if row >= self.rows || col >= self.cols {
             Err(MoveError::MoveOutsideBoard)
