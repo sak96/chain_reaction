@@ -52,7 +52,6 @@ name = "chain_reaction"
 version = "0.1.0"
 dependencies = [
  "gloo-timers",
- "wasm-bindgen-futures",
  "web-sys",
  "wee_alloc",
  "yew",
