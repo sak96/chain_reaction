@@ -72,7 +72,6 @@ pub fn game_board(GameBoardPorps { players }: &GameBoardPorps) -> Html {
         })
     };
     let player_colors = (0..*players)
-        .into_iter()
         .map(|p| {
             format!(
                 r#".player-{p} {{color: hsl({h},50%,50%);}}
